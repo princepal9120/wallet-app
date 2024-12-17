@@ -1,81 +1,283 @@
-# Turborepo starter
+# **Full-Stack Wallet App**
 
-This is an official starter Turborepo.
+Welcome to the **Full-Stack Wallet App**! This project includes a **React Native mobile app**, an **Express API backend**, and a **Next.js admin panel**. It uses **Prisma ORM**, **tRPC** for type-safe APIs, and modern development tools for seamless functionality.
 
-## Using this example
+---
 
-Run the following command:
+## **Table of Contents**
 
-```sh
-npx create-turbo@latest
+- [Project Structure](#project-structure)
+- [Prerequisites](#prerequisites)
+- [Setup Guide](#setup-guide)
+  - [1. Clone the Repository](#1-clone-the-repository)
+  - [2. Backend Setup (Express API)](#2-backend-setup-express-api)
+  - [3. Database Setup](#3-database-setup)
+  - [4. Mobile App Setup (React Native)](#4-mobile-app-setup-react-native)
+  - [5. Web Admin Panel Setup (Next.js)](#5-web-admin-panel-setup-nextjs)
+- [Running the Application](#running-the-application)
+- [Environment Variables](#environment-variables)
+- [Troubleshooting](#troubleshooting)
+- [Contributing](#contributing)
+- [License](#license)
+
+---
+
+## **Project Structure**
+
+```plaintext
+wallet-app/
+|
+├── apps/
+│   ├── mobile/         # React Native Mobile App
+│   ├── server/         # Express Backend (API with Prisma)
+│   └── web/            # Next.js Web Admin Panel
+|
+├── packages/
+│   ├── types/          # Shared TypeScript Types
+│   └── config/         # Shared ESLint & tsconfig
+|
+├── prisma/             # Prisma Configuration
+│   ├── schema.prisma   # Prisma Models
+│   └── seed.ts         # Initial Database Seed
+|
+├── docs/               # Documentation
+└── ...                 # Configuration Files
 ```
 
-## What's inside?
+---
 
-This Turborepo includes the following packages/apps:
+## **Prerequisites**
 
-### Apps and Packages
+Ensure the following tools are installed on your system:
 
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
+- **Node.js** (v16+)
+- **npm** or **Yarn**
+- **PostgreSQL** (or your preferred database)
+- **React Native CLI** (for mobile development)
+- **Expo CLI** (optional, if using Expo)
+- **Prisma CLI**
 
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
+---
 
-### Utilities
+## **Setup Guide**
 
-This Turborepo has some additional tools already setup for you:
+### **1. Clone the Repository**
 
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
+First, clone the repository to your local machine:
 
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm build
+```bash
+git clone https://github.com/your-username/wallet-app.git
+cd wallet-app
 ```
 
-### Develop
+Install dependencies for all workspaces:
 
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-pnpm dev
+```bash
+npm install
 ```
 
-### Remote Caching
+---
 
-Turborepo can use a technique known as [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+### **2. Backend Setup (Express API)**
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup), then enter the following commands:
+1. Navigate to the server directory:
 
+   ```bash
+   cd apps/server
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create an `.env` file in `apps/server`:
+
+   ```plaintext
+   DATABASE_URL="postgresql://username:password@localhost:5432/wallet_db"
+   PORT=5000
+   ```
+
+4. Apply the Prisma schema and seed data:
+
+   ```bash
+   npx prisma migrate dev --name init
+   npx prisma generate
+   npx ts-node prisma/seed.ts
+   ```
+
+5. Run the server:
+
+   ```bash
+   npm run dev
+   ```
+
+Your server will start on `http://localhost:5000`.
+
+---
+
+### **3. Database Setup**
+
+Ensure PostgreSQL (or your chosen database) is running. Update the `DATABASE_URL` in the `.env` file with your credentials.
+
+Example for PostgreSQL:
+```plaintext
+DATABASE_URL="postgresql://user:password@localhost:5432/db_name"
 ```
-cd my-turborepo
-npx turbo login
+
+---
+
+### **4. Mobile App Setup (React Native)**
+
+1. Navigate to the mobile app directory:
+
+   ```bash
+   cd apps/mobile
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Start the React Native app:
+
+   - For Android:
+     ```bash
+     npx react-native run-android
+     ```
+
+   - For iOS:
+     ```bash
+     npx react-native run-ios
+     ```
+
+4. Ensure the API URL in `src/utils/trpc.ts` points to your local backend:
+
+   ```ts
+   export const trpc = createTRPCProxyClient<AppRouter>({
+     links: [
+       httpBatchLink({
+         url: 'http://localhost:5000/trpc',
+       }),
+     ],
+   });
+   ```
+
+---
+
+### **5. Web Admin Panel Setup (Next.js)**
+
+1. Navigate to the web directory:
+
+   ```bash
+   cd apps/web
+   ```
+
+2. Install dependencies:
+
+   ```bash
+   npm install
+   ```
+
+3. Create a `.env` file in `apps/web` (if needed).
+
+4. Run the Next.js app:
+
+   ```bash
+   npm run dev
+   ```
+
+The web app will be available at `http://localhost:3000`.
+
+---
+
+## **Running the Application**
+
+To run the entire application:
+
+1. **Start the Backend Server:**
+
+   ```bash
+   cd apps/server
+   npm run dev
+   ```
+
+2. **Start the Mobile App:**
+
+   ```bash
+   cd apps/mobile
+   npx react-native start
+   ```
+
+   Use `run-android` or `run-ios` depending on your environment.
+
+3. **Start the Web Admin Panel:**
+
+   ```bash
+   cd apps/web
+   npm run dev
+   ```
+
+---
+
+## **Environment Variables**
+
+Ensure the following environment variables are configured:
+
+### **Backend (.env in `apps/server`)**
+
+```plaintext
+DATABASE_URL="postgresql://username:password@localhost:5432/wallet_db"
+PORT=5000
 ```
 
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
+### **Web Admin Panel**
 
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
+Add any required variables such as API URLs.
 
+### **Mobile App**
+
+Verify the tRPC API endpoint in `src/utils/trpc.ts`:
+
+```ts
+url: 'http://localhost:5000/trpc'
 ```
-npx turbo link
-```
 
-## Useful Links
+---
 
-Learn more about the power of Turborepo:
+## **Troubleshooting**
 
-- [Tasks](https://turbo.build/repo/docs/core-concepts/monorepos/running-tasks)
-- [Caching](https://turbo.build/repo/docs/core-concepts/caching)
-- [Remote Caching](https://turbo.build/repo/docs/core-concepts/remote-caching)
-- [Filtering](https://turbo.build/repo/docs/core-concepts/monorepos/filtering)
-- [Configuration Options](https://turbo.build/repo/docs/reference/configuration)
-- [CLI Usage](https://turbo.build/repo/docs/reference/command-line-reference)
+1. **Database Connection Issues:**
+   - Verify the `DATABASE_URL` in the `.env` file.
+   - Ensure PostgreSQL is running.
+
+2. **React Native Setup:**
+   - Ensure `react-native` CLI is installed.
+   - Check Android/iOS simulators are running.
+
+3. **API Not Connecting:**
+   - Confirm the backend server is running on `localhost:5000`.
+   - Update the API URL in mobile/web configurations.
+
+4. **Missing Dependencies:**
+   - Run `npm install` in each project directory.
+
+---
+
+## **Contributing**
+
+Contributions are welcome! Please create a pull request and adhere to the existing project structure.
+
+---
+
+## **License**
+
+This project is licensed under the [MIT License](LICENSE).
+
+---
+
+**Happy Coding! 🚀**
+
