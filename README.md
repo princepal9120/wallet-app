@@ -17,7 +17,6 @@ Welcome to the **Full-Stack Wallet App**! This project includes a **React Native
 - [Running the Application](#running-the-application)
 - [Environment Variables](#environment-variables)
 - [Troubleshooting](#troubleshooting)
-- [Contributing](#contributing)
 - [License](#license)
 
 ---
@@ -265,11 +264,6 @@ url: 'http://localhost:5000/trpc'
 4. **Missing Dependencies:**
    - Run `npm install` in each project directory.
 
----
-
-## **Contributing**
-
-Contributions are welcome! Please create a pull request and adhere to the existing project structure.
 
 ---
 
